@@ -5,12 +5,15 @@ import App from './App.jsx'
 import { BrowserRouter} from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
+import MainContext from './context/MainContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
     <Provider store={store}>
-      <App />
+      <MainContext>
+         <App />  {/* <----------------- main App */}
+      </MainContext>
     </Provider>
     </BrowserRouter>
   </StrictMode>,
