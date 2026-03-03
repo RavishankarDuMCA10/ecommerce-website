@@ -1,13 +1,16 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
+import LoginUser from '@/pages/auth/LoginUser'
+import MainLayout from '@/layout/MainLayout'
 import HomePage from './pages/HomePage'
-import Header from './components/Header'
 const App = () => {
   return (
     <>
-    <Header />
     <Routes>
-      <Route path='/' Component={HomePage} />
+      <Route path='/' Component={MainLayout} > 
+        <Route index Component={HomePage} />
+      </Route>
+      <Route path='/login' Component={LoginUser} />
     </Routes>
     </>
   )

@@ -1,5 +1,5 @@
 import React from 'react'
-import { AuthContextProvider } from './AuthContext'
+import { AuthContextProvider } from '@/context/AuthContext'
 
 const MainContext = ({children}) => {
   return (
