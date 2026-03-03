@@ -1,12 +1,15 @@
 from fastapi import APIRouter
 from controllers.authController import registerController
 from typing import Any
-from models.authModel import User as UserModel
+from models.authModel import RegisterUser
+from config.db import user_collection
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
 
 # register
 @router.post("/register")
-def registerView(data: UserModel):
-    return registerController(data.dict())
+async def registerView(data: RegisterUser):
+    doc = await user_collection.insert_one(data.dict())
+    print(doc)
+    return registerController(data)

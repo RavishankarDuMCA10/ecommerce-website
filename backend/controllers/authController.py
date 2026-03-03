@@ -1,5 +1,5 @@
 from services.authService import registerService
 
 
-def registerController():
-    return registerService()
+def registerController(data):
+    return registerService(data)

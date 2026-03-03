@@ -22,3 +22,7 @@ class User(BaseModel):
         if len(value) < 3:
             raise ValueError("Name must be at least 3 characters long")
         return value
+
+
+class RegisterUser(User):
+    pass
