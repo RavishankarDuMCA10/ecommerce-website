@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Logo from '@/components/ui/Logo'
 import AuthButton from '@/components/ui/AuthButton'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 const LoginUser = () => {
 
@@ -24,7 +25,12 @@ const LoginUser = () => {
           </div>
           <div className="mb-3">
             <label htmlFor="password">Password <span className="text-red-500">*</span></label>
-            <input id='password' type="password" className="w-full py-2 px-2 rounded outline-none bg-gray-50 border border-gray-200" placeholder='Enter Your Password' />
+            <div className="w-full px-2 rounded outline-none bg-gray-50 border border-gray-200 flex justify-between items-center">
+              <input id='password' type={isHide ? "password" : "text"} className='w-full py-2 outline-none' placeholder='Enter Your Password' />
+              <button onClick={()=>setIsHide(!isHide)} type='button' className='text-xl'>
+                {isHide ? <FaEye /> : <FaEyeSlash />}
+              </button>
+            </div>            
           </div>
           <div className="mb-3">
             <AuthButton
