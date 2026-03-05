@@ -8,5 +8,5 @@ router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
 # register
 @router.post("/register")
-def registerView(data: RegisterUser):
-    return registerController(data)
+async def registerView(data: RegisterUser):
+    return await registerController(data)
