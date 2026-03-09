@@ -5,29 +5,36 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import {Formik, Form, Field, ErrorMessage} from 'formik'
 import * as yup from 'yup'
-import { ROLE_TYPE } from '@/constant/auth.constant'
 import { axiosClient } from '@/utils/axiosClient'
+import { toast } from 'react-toastify'
 
 const LoginUser = () => {
 
   const [isLoading, setIsLoading] = useState(false)
   const [isHide, setIsHide] = useState(true)
 
-  const validationSchema = yup.object({
-    name: yup.string().required('Name is required'),
+  const validationSchema = yup.object({    
     email: yup.string().email('Invalid email format').required('Email must be a proper email'),
     password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-    role: yup.string().required('Role is required').oneOf(Object.values(ROLE_TYPE), 'Role must be either buyer or seller')
   })
 
   const onSubmitHandler = async (value, helpers) => {
-    const response = await axiosClient.post("/auth/register", value)
-    const data = response.data
-    console.log(data)
-    helpers.resetForm()
+    try {
+      setIsLoading(true)
+      const response = await axiosClient.post("/auth/login", value)
+      const data = response.data
+      // console.log(data)
+      toast.success(data.message || "Login successful")
+      helpers.resetForm()
+    } catch (error) {
+      console.log(error)
+      toast.error(error.response.data.details || error.message)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const initialValues={name:'', email:'', password:'', role:ROLE_TYPE.BUYER}
+  const initialValues={email:'', password:''}
 
   return (
     <>
@@ -36,12 +43,7 @@ const LoginUser = () => {
         <div className="w-[96%] mx-auto lg:1/2 xl:w-1/3 p-4 lg:px-10 rounded border border-gray-100 shadow">
           <div className="mb-3 w-full flex justify-center">
             <Logo className={'mx-auto block'} />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="name">Name <span className="text-red-500">*</span></label>
-            <Field name='name' id='name' type="text" className="w-full py-2 px-2 rounded outline-none bg-gray-50 border border-gray-200" placeholder='Enter You Name' />
-            <ErrorMessage name='name' component={'p'} className='text-red-500' />
-          </div>
+          </div>          
           <div className="mb-3">
             <label htmlFor="email">Email <span className="text-red-500">*</span></label>
             <Field name='email' id='email' type="email" className="w-full py-2 px-2 rounded outline-none bg-gray-50 border border-gray-200" placeholder='Enter Your Email' />
@@ -56,17 +58,6 @@ const LoginUser = () => {
               </button>
             </div>
             <ErrorMessage name='password' component={'p'} className='text-red-500' />            
-          </div>
-          <div className="mb-3">
-            <label htmlFor="Role">Role <span className="text-red-500">*</span></label>
-            <Field as='select' name='role' id='role' className="w-full py-2 px-2 rounded outline-none bg-gray-50 border border-gray-200">
-              {
-                Object.values(ROLE_TYPE).map((cur, i) =>{
-                  return <option value={cur} className='capitalize'>{cur}</option>
-                })
-              }
-            </Field>
-            <ErrorMessage name='role' component={'p'} className='text-red-500' />
           </div>
           <div className="mb-3">
             <AuthButton
