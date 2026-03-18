@@ -28,6 +28,7 @@ const RegisterUser = () => {
       const data = response.data
       // console.log(data)
       toast.success(data.message || "Registration successful")
+      localStorage.setItem("token", data.token)
       helpers.resetForm()
     } catch (error) {
       // console.log(error)

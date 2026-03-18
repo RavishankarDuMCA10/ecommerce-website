@@ -1,10 +1,14 @@
 from config.db import user_collection
-from models.authModel import RegisterUser, LoginUser
+from models import authModel
 from fastapi.exceptions import HTTPException
 import bcrypt
+import jwt
+from config.Env import ENVConfig
+from datetime import datetime, timedelta
+import bson
 
 
-async def registerService(data: RegisterUser):
+async def registerService(data: authModel.RegisterUser):
     check_exist = await user_collection.find_one({"email": data.email.lower()})
     if check_exist:
         raise HTTPException(status_code=400, detail="Email already exists")
@@ -14,12 +18,20 @@ async def registerService(data: RegisterUser):
     hash_string = hashed_password.decode("utf-8")
     user_data = data.dict()
     user_data["password"] = hash_string
+    doc = await user_collection.insert_one(user_data)
+    token = jwt.encode(
+        {
+            "user_id": str(doc.inserted_id),
+            "exp": datetime.utcnow() + timedelta(days=2),
+            "iat": datetime.utcnow(),
+        },
+        ENVConfig.JWT_AUTH_SECRET_KEY,
+        algorithm=ENVConfig.ALGORITHMS,
+    )
+    return {"message": "User registered successfully", "token": token}
 
-    await user_collection.insert_one(user_data)
-    return {"message": "User registered successfully", "toekn": ""}
 
-
-async def loginService(data: LoginUser):
+async def loginService(data: authModel.LoginUser):
     # Check if user exist
     check_exist = await user_collection.find_one({"email": data.email.lower()})
     if not check_exist:
@@ -32,5 +44,23 @@ async def loginService(data: LoginUser):
     if not is_match:
         raise HTTPException(status_code=400, detail="Invalid Credentials")
 
-    token = ""
+    token = jwt.encode(
+        {
+            "user_id": str(check_exist["_id"]),
+            "exp": datetime.utcnow() + timedelta(days=2),
+            "iat": datetime.utcnow(),
+        },
+        ENVConfig.JWT_AUTH_SECRET_KEY,
+        algorithm=ENVConfig.ALGORITHMS,
+    )
+
     return {"message": "Login Successfull", "token": token}
+
+
+async def profileService(userId: str):
+    check_exist = await user_collection.find_one({"_id": bson.ObjectId(userId)})
+    if not check_exist:
+        raise HTTPException(status_code=404, detail="User Detail Not Found")
+    del check_exist["password"]
+    check_exist["_id"] = str(check_exist["_id"])
+    return check_exist
