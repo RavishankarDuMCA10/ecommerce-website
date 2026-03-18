@@ -10,9 +10,10 @@ const AuthLayout = ({children}) => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (user) {
-            navigate("/dashboard")
-            return <></>
+        if (user) {            
+            navigate("/dashboard")            
+        } else {
+            setLoading(false)
         }
     }, [user])
 
