@@ -2,17 +2,20 @@ import React, { useState } from 'react'
 import Logo from '@/components/ui/Logo'
 import AuthButton from '@/components/ui/AuthButton'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {Formik, Form, Field, ErrorMessage} from 'formik'
 import * as yup from 'yup'
 import { ROLE_TYPE } from '@/constant/auth.constant'
 import { axiosClient } from '@/utils/axiosClient'
 import { toast } from 'react-toastify'
+import { useAuthContext } from '@/context/AuthContext'
 
 const RegisterUser = () => {
 
   const [isLoading, setIsLoading] = useState(false)
   const [isHide, setIsHide] = useState(true)
+  const navigate = useNavigate()
+  const { fetchUserProfile } = useAuthContext()
 
   const validationSchema = yup.object({
     name: yup.string().required('Name is required'),
@@ -29,7 +32,9 @@ const RegisterUser = () => {
       // console.log(data)
       toast.success(data.message || "Registration successful")
       localStorage.setItem("token", data.token)
+      await fetchUserProfile()
       helpers.resetForm()
+      navigate("/dashboard")
     } catch (error) {
       // console.log(error)
       toast.error(error.response.data.details || error.message)
