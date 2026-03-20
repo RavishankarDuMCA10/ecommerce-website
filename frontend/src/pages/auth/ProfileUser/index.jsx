@@ -1,8 +1,11 @@
 import React from 'react'
+import AvatarComponent from './components/AvatarComponent'
 
 const ProfileUser = () => {
   return (
-    <div>ProfileUser</div>
+    <>
+      <AvatarComponent />
+    </>
   )
 }
 

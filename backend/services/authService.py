@@ -1,3 +1,4 @@
+from fastapi import File, UploadFile
 from config.db import user_collection
 from models import authModel
 from fastapi.exceptions import HTTPException
@@ -6,6 +7,9 @@ import jwt
 from config.Env import ENVConfig
 from datetime import datetime, timedelta
 import bson
+from typing import Annotated
+import config.cloudinaryConfig
+import cloudinary.uploader
 
 
 async def registerService(data: authModel.RegisterUser):
@@ -64,3 +68,32 @@ async def profileService(userId: str):
     del check_exist["password"]
     check_exist["_id"] = str(check_exist["_id"])
     return check_exist
+
+
+async def updateAvatarService(avatar: Annotated[UploadFile, File()], userId: str):
+    try:
+        exist = await user_collection.find_one({"_id": bson.ObjectId(userId)})
+        if exist["avatar"] and exist["avatar"]["image_uri"]:
+            cloudinary.uploader.destroy(exist["avatar"]["public_id"])
+
+        contents = await avatar.read()
+        print(f"Received file: {avatar.filename}")
+        upload_result = cloudinary.uploader.upload(
+            contents, folder="ecommerce-website/user_profile"
+        )
+        print(f"Upload result: {upload_result}")
+        await user_collection.find_one_and_update(
+            {"_id": bson.ObjectId(userId)},
+            {
+                "$set": {
+                    "avatar": {
+                        "image_uri": upload_result["secure_url"],
+                        "public_id": upload_result["public_id"],
+                    }
+                }
+            },
+        )
+        return {"msg": "Profile image updated successfully"}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail=f"{e}")

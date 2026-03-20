@@ -9,11 +9,17 @@ class RolesEnum(str, Enum):
     buyer = "buyer"
 
 
+class ProfileImage(BaseModel):
+    image_uri: str
+    public_id: str
+
+
 class User(BaseModel):
     name: str = Field(...)
     email: EmailStr = Field(...)
     password: str = Field(..., min_length=6)
     role: Optional[RolesEnum] = Field(default=RolesEnum.buyer)
+    avatar: Optional[ProfileImage] = Field(default=None)
     create_at: datetime = Field(default_factory=datetime.now)
     update_at: datetime = Field(default_factory=datetime.now)
 

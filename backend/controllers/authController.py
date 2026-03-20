@@ -1,6 +1,8 @@
+from typing import Annotated
 from services import authService
 from models import authModel
 from fastapi.exceptions import HTTPException
+from fastapi import File, UploadFile
 
 
 async def registerController(data: authModel.RegisterUser):
@@ -24,6 +26,15 @@ async def loginController(data: authModel.LoginUser):
 async def profileController(userId: str):
     try:
         res_obj = await authService.profileService(userId)
+        return res_obj
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail=f"{e}")
+
+
+async def updateAvatarController(avatar: Annotated[UploadFile, File()], userId: str):
+    try:
+        res_obj = await authService.updateAvatarService(avatar, userId)
         return res_obj
     except Exception as e:
         print(e)
