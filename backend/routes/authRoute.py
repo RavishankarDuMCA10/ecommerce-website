@@ -30,3 +30,10 @@ async def updateAvatar(
     avatar: Annotated[UploadFile, File()], userId=Depends(verifyToken)
 ):
     return await authController.updateAvatarController(avatar, userId)
+
+
+@router.put("/update-basic-details")
+async def updateBasicDetails(
+    data: authModel.UpdateBasicDetails, userId=Depends(verifyToken)
+):
+    return await authController.updateBasicDetailsController(data, userId)

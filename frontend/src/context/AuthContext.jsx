@@ -7,7 +7,11 @@ import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import LoaderComponent from '@/components/ui/LoaderComponent'
 
-const AuthContext = createContext()
+const AuthContext = createContext({
+  user: null,
+  fetchUserProfile: () => {},
+  logoutUser: () => {},
+})
 
 export const useAuthContext = () => useContext(AuthContext)
 
@@ -25,7 +29,6 @@ export const AuthContextProvider = ({children}) => {
     */
     const fetchUserProfile = async() => {
       try{
-        setLoading(true)
         const token = localStorage.getItem("token") || ""
         if (!token) return
         const response = await axiosClient.get("/auth/profile", {

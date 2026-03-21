@@ -58,7 +58,7 @@ const AvatarComponent = () => {
                 { loading ? <>
                     <CgSpinner className='text-4xl animate-spin' />
                 </>
-                : <img src={user.avatar?.image_uri ?? sample_uri} alt="avatar" className='w-full h-full rounded-full object-cover' />}
+                : <img src={user?.avatar ?? sample_uri} alt="avatar" className='w-full h-full rounded-full object-cover' />}
                 </>                
             }
             <button className='p-1 text-xl rounded-full bg-blue-600 absolute -right-2 bottom-10 text-white'>

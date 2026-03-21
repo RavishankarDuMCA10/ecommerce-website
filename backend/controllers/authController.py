@@ -39,3 +39,12 @@ async def updateAvatarController(avatar: Annotated[UploadFile, File()], userId: 
     except Exception as e:
         print(e)
         raise HTTPException(status_code=400, detail=f"{e}")
+
+
+async def updateBasicDetailsController(data: authModel.UpdateBasicDetails, userId: str):
+    try:
+        res_obj = await authService.updateBasicDetailsService(data, userId)
+        return res_obj
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail=f"{e}")

@@ -45,6 +45,10 @@ class RegisterUser(User):
     pass
 
 
+class UpdateBasicDetails(BaseModel):
+    name: str = Field(...)
+
+
 class LoginUser(BaseModel):
     email: EmailStr = Field(...)
     password: str = Field(..., min_length=6)
