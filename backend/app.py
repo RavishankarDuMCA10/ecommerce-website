@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from routes.authRoute import router as AuthRouter
 from fastapi.middleware.cors import CORSMiddleware
+import config.cloudinaryConfig  # noqa: F401 – initializes cloudinary at startup
 
 # Create a FastAPI instance
 app = FastAPI()

@@ -1,5 +1,5 @@
 from fastapi import File, UploadFile
-from config.db import user_collection
+from config.db import user_collection, profile_collection
 from models import authModel
 from fastapi.exceptions import HTTPException
 import bcrypt
@@ -8,7 +8,6 @@ from config.Env import ENVConfig
 from datetime import datetime, timedelta
 import bson
 from typing import Annotated
-import config.cloudinaryConfig
 import cloudinary.uploader
 
 
@@ -22,7 +21,14 @@ async def registerService(data: authModel.RegisterUser):
     hash_string = hashed_password.decode("utf-8")
     user_data = data.dict()
     user_data["password"] = hash_string
+    del user_data["name"]
     doc = await user_collection.insert_one(user_data)
+    # profile
+    user_profile = authModel.UserProfile(
+        user_id=str(doc.inserted_id),
+        name=data.name,
+    )
+    await profile_collection.insert_one(user_profile.dict())
     token = jwt.encode(
         {
             "user_id": str(doc.inserted_id),
@@ -62,17 +68,25 @@ async def loginService(data: authModel.LoginUser):
 
 
 async def profileService(userId: str):
-    check_exist = await user_collection.find_one({"_id": bson.ObjectId(userId)})
+    check_exist = await user_collection.find_one(
+        {"_id": bson.ObjectId(userId)},
+        {
+            "password": 0,
+        },
+    )
     if not check_exist:
         raise HTTPException(status_code=404, detail="User Detail Not Found")
-    del check_exist["password"]
+    # del check_exist["password"]
     check_exist["_id"] = str(check_exist["_id"])
-    return check_exist
+    profile = await profile_collection.find_one({"user_id": check_exist["_id"]})
+    del profile["_id"]
+    del profile["user_id"]
+    return check_exist | profile
 
 
 async def updateAvatarService(avatar: Annotated[UploadFile, File()], userId: str):
     try:
-        exist = await user_collection.find_one({"_id": bson.ObjectId(userId)})
+        exist = await profile_collection.find_one({"user_id": userId})
         if exist["avatar"] and exist["avatar"]["image_uri"]:
             cloudinary.uploader.destroy(exist["avatar"]["public_id"])
 
@@ -82,14 +96,15 @@ async def updateAvatarService(avatar: Annotated[UploadFile, File()], userId: str
             contents, folder="ecommerce-website/user_profile"
         )
         print(f"Upload result: {upload_result}")
-        await user_collection.find_one_and_update(
-            {"_id": bson.ObjectId(userId)},
+        await profile_collection.find_one_and_update(
+            {"user_id": userId},
             {
                 "$set": {
                     "avatar": {
                         "image_uri": upload_result["secure_url"],
                         "public_id": upload_result["public_id"],
-                    }
+                    },
+                    "update_at": datetime.now(),
                 }
             },
         )

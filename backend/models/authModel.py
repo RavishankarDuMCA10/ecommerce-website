@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field, EmailStr, field_validator
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Union, Optional
+from typing import List, Optional
+import bson
 
 
 class RolesEnum(str, Enum):
@@ -19,15 +20,25 @@ class User(BaseModel):
     email: EmailStr = Field(...)
     password: str = Field(..., min_length=6)
     role: Optional[RolesEnum] = Field(default=RolesEnum.buyer)
-    avatar: Optional[ProfileImage] = Field(default=None)
     create_at: datetime = Field(default_factory=datetime.now)
     update_at: datetime = Field(default_factory=datetime.now)
 
-    @field_validator("name")
-    def validate_name(cls, value):
-        if len(value) < 3:
-            raise ValueError("Name must be at least 3 characters long")
-        return value
+
+class AddressModel(BaseModel):
+    pin_code: str
+    district: str
+    state: str
+    country: str
+    landmark: str
+
+
+class UserProfile(BaseModel):
+    user_id: str = Field(...)
+    name: str = Field(...)
+    avatar: Optional[ProfileImage] = Field(default=None)
+    address: List[AddressModel] = []
+    create_at: datetime = Field(default_factory=datetime.now)
+    update_at: datetime = Field(default_factory=datetime.now)
 
 
 class RegisterUser(User):
