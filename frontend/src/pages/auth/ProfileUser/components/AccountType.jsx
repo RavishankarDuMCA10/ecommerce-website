@@ -21,16 +21,19 @@ const AccountType = () => {
     ]
 
   return (
-    <div className='grid grid-cols-2 gap-x-2'>
-        {
-            Ac_Type.map((cur, i) => {
-                return <div key={i} className={clsx('w-full relative p-2 rounded-xl bg-gray-100', cur.type == user.role ? "border-blue-400 border-2" : "border border-gray-200")} title={cur.type}>
-                    {user.role == cur.type && <RiVerifiedBadgeFill className='absolute text-2xl text-blue-500 right-4' />}
-                    <img src={cur.image} alt={cur.type} />
-                </div>
-            })
-        }
-    </div>
+    <>
+      <h4 className='text-2xl py-3 font-blod'>Account Type</h4>
+      <div className='grid grid-cols-2 gap-x-2'>
+            {
+                Ac_Type.map((cur, i) => {
+                    return <div key={i} className={clsx('w-full relative p-2 rounded-xl bg-gray-100', cur.type == user.role ? "border-blue-400 border-2" : "border border-gray-200")} title={cur.type}>
+                        {user.role == cur.type && <RiVerifiedBadgeFill className='absolute text-2xl text-blue-500 right-4' />}
+                        <img src={cur.image} alt={cur.type} />
+                    </div>
+                })
+            }
+        </div>
+    </>
   )
 }
 

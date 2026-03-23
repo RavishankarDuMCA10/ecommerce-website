@@ -81,7 +81,8 @@ async def profileService(userId: str):
     profile = await profile_collection.find_one({"user_id": check_exist["_id"]})
     del profile["_id"]
     del profile["user_id"]
-    profile["avatar"] = profile["avatar"]["image_uri"]
+    if profile["avatar"]:
+        profile["avatar"] = profile["avatar"]["image_uri"]
     return check_exist | profile
 
 
@@ -130,3 +131,40 @@ async def updateBasicDetailsService(data: authModel.UpdateBasicDetails, userId: 
     except Exception as e:
         print(e)
         raise HTTPException(status_code=400, detail=f"{e}")
+
+
+async def addNewAddressService(data: authModel.AddressModel, userID: str):
+    check_exist = await profile_collection.find_one({"user_id": userID})
+    if not check_exist:
+        raise HTTPException(status_code=404, detail="User Detail Not Found")
+
+    id = bson.ObjectId()
+    data = data.dict()
+    data["_id"] = str(id)
+    await profile_collection.find_one_and_update(
+        {"user_id": userID},
+        {
+            "$push": {"address": data},
+            "$set": {
+                "update_at": datetime.now(),
+            },
+        },
+    )
+    return {"msg": "New address added successfully"}
+
+
+async def deleteAddressService(id: str, userId: str):
+    check_exist = await profile_collection.find_one({"user_id": userId})
+    if not check_exist:
+        raise HTTPException(status_code=404, detail="User Detail Not Found")
+
+    await profile_collection.find_one_and_update(
+        {"user_id": userId},
+        {
+            "$pull": {"address": {"_id": id}},
+            "$set": {
+                "update_at": datetime.now(),
+            },
+        },
+    )
+    return {"msg": "Address deleted successfully"}

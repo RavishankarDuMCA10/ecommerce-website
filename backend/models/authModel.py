@@ -26,7 +26,7 @@ class User(BaseModel):
 
 class AddressModel(BaseModel):
     pin_code: str
-    district: str
+    city: str
     state: str
     country: str
     landmark: str

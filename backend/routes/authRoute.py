@@ -37,3 +37,13 @@ async def updateBasicDetails(
     data: authModel.UpdateBasicDetails, userId=Depends(verifyToken)
 ):
     return await authController.updateBasicDetailsController(data, userId)
+
+
+@router.post("/add-address")
+async def addAddress(data: authModel.AddressModel, userID=Depends(verifyToken)):
+    return await authController.addNewAddressController(data, userID)
+
+
+@router.delete("/delete-address/{id}")
+async def deleteAddress(id: str, userID=Depends(verifyToken)):
+    return await authController.deleteAddressController(id, userID)
