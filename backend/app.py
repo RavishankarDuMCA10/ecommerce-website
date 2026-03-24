@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from routes.authRoute import router as AuthRouter
+from routes.productRoute import router as ProductRouter
 from fastapi.middleware.cors import CORSMiddleware
 import config.cloudinaryConfig  # noqa: F401 – initializes cloudinary at startup
 
@@ -17,6 +18,7 @@ app.add_middleware(
 
 # Routes
 app.include_router(AuthRouter)
+app.include_router(ProductRouter)
 
 
 @app.get("/", tags=["health"])

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Outlet, useNavigate, Link } from 'react-router-dom'
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { setToggle, SidebarSlicePath } from '@/redux/slice/sidebar.slice'
+import { MdProductionQuantityLimits } from "react-icons/md";
 
 
 const ProtectedLayout = () => {
@@ -46,6 +47,9 @@ const ProtectedLayout = () => {
                     }}
                 >
                     <MenuItem component={<Link to="/dashboard" />}> Dashboard</MenuItem>
+                    <SubMenu label="Products" icon={<MdProductionQuantityLimits />} >
+                        <MenuItem component={<Link to="/add-product" />}> Add Product</MenuItem>
+                    </SubMenu>
                     <MenuItem component={<Link to="/profile" />}> Profile</MenuItem>
                 </Menu>
             </Sidebar>

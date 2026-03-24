@@ -14,7 +14,7 @@ const Header = () => {
     const {logoutUser} = useAuthContext()
     const {isToggle, isCollapse} = useSelector(SidebarSlicePath)
     const {pathname} = useLocation()
-    const protected_routes = ["/dashboard", "/profile"]
+    const protected_routes = ["/dashboard", "/profile", "/add-product"]
     const dispatch = useDispatch()
     
   return (
@@ -35,7 +35,7 @@ const Header = () => {
             <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
                 <Link to={'/'} className="mr-5 hover:text-gray-900">Home</Link>
                 <Link to={'/about'} className="mr-5 hover:text-gray-900">About</Link>
-                {user ?<>
+                {user ? <>
                     <Link to={'/dashboard'} className="mr-5 hover:text-gray-900">Dashboard</Link>
                     <button onClick={logoutUser} className='mr-5 hover:text-gray-900 cursor-pointer'>Logout</button>
                 </> : <Link to={'/login'} className="mr-5 hover:text-gray-900">Login</Link>}

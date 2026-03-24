@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import LoginUser from '@/pages/auth/LoginUser'
 import Dashboard from '@/pages/Dashboard'
 import CartPage from '@/pages/CartPage'
+import AddProduct from '@/pages/Products/AddProduct'
 import MainLayout from '@/layout/MainLayout'
 import HomePage from '@/pages/HomePage'
 import RegisterUser from '@/pages/auth/RegisterUser'
@@ -16,8 +17,12 @@ const App = () => {
     <Routes>
       <Route path='/' Component={MainLayout} > 
         <Route index Component={HomePage} />
-        <Route path='/cart' Component={CartPage} />        
+        <Route path='/cart' Component={CartPage} />         
+
         <Route Component={ProtectedLayout}>
+          {/* /** Seller routes */        }
+          <Route path='/add-product' Component={AddProduct} />
+          
           <Route path='/dashboard' Component={Dashboard} />
           <Route path='/profile' Component={ProfileUser} />
         </Route>

@@ -55,7 +55,7 @@ export const AuthContextProvider = ({children}) => {
      */
     const logoutUser=() => {
       localStorage.removeItem("token")
-      dispatch(removeUser)
+      dispatch(removeUser())
       toast.success("Logout successful")
       navigate('/')
     }

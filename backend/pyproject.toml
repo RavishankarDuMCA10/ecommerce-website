@@ -12,5 +12,7 @@ dependencies = [
     "pyjwt>=2.12.1",
     "python-dotenv>=1.2.2",
     "python-multipart>=0.0.22",
+    "python-slugify>=8.0.4",
+    "uuid>=1.30",
     "uvicorn>=0.41.0",
 ]

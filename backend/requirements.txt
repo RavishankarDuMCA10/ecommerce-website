@@ -6,3 +6,5 @@ python-dotenv
 uvicorn
 cloudinary
 python-multipart
+python-slugify
+uuid
