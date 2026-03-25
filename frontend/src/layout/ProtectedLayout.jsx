@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Outlet, useNavigate, Link } from 'react-router-dom'
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { setToggle, SidebarSlicePath } from '@/redux/slice/sidebar.slice'
-import { MdProductionQuantityLimits } from "react-icons/md";
+import { MdDashboard, MdProductionQuantityLimits } from "react-icons/md";
+import { ROLE_TYPE } from '@/constant/auth.constant'
+import { CgProfile } from 'react-icons/cg'
+import { CiShoppingCart } from "react-icons/ci";
 
 
 const ProtectedLayout = () => {
@@ -34,7 +37,7 @@ const ProtectedLayout = () => {
         <div className="flex items-start">
             <Sidebar collapsed={isCollapse} toggled={isToggle} onBackdropClick={() => dispatch(setToggle())} breakPoint='md'>
                 <Menu
-                className='h-screen bg-white border-none'
+                className='h-[80vh] bg-white border-none'
                     menuItemStyles={{
                     button: {
                         // the active class will be added automatically by react router
@@ -46,11 +49,23 @@ const ProtectedLayout = () => {
                     },
                     }}
                 >
-                    <MenuItem component={<Link to="/dashboard" />}> Dashboard</MenuItem>
-                    <SubMenu label="Products" icon={<MdProductionQuantityLimits />} >
-                        <MenuItem component={<Link to="/add-product" />}> Add Product</MenuItem>
-                    </SubMenu>
-                    <MenuItem component={<Link to="/profile" />}> Profile</MenuItem>
+                    <MenuItem icon={<MdDashboard className='text-2xl' />} component={<Link to="/dashboard" />}> Dashboard</MenuItem>
+                    {
+                        user.role == ROLE_TYPE.BUYER ? <>
+                        {/* Buyer */}
+                            
+                            <MenuItem icon={<CiShoppingCart className='text-2xl' />} component={<Link to="/orders" />}> My Orders</MenuItem>
+                                {/* <MenuItem component={<Link to="/all-products" />}> All Products</MenuItem> */}
+                            
+                        </> : <>
+                        {/* Seller */}
+                        <SubMenu label="Products" icon={<MdProductionQuantityLimits className='text-2xl' />} >
+                            <MenuItem component={<Link to="/add-product" />}> Add Product</MenuItem>
+                            <MenuItem component={<Link to="/all-products" />}> All Products</MenuItem>
+                        </SubMenu>
+                        </>
+                    }
+                    <MenuItem icon={<CgProfile className='text-2xl' />} component={<Link to="/profile" />}> Profile</MenuItem>
                 </Menu>
             </Sidebar>
             <main className="px-4 w-full">
