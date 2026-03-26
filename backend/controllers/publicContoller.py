@@ -8,3 +8,11 @@ async def getAllProductsContoller():
         return res_obj
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+async def getProductBySlugController(slug: str):
+    try:
+        res_obj = await publicService.getProductBySlugService(slug)
+        return res_obj
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

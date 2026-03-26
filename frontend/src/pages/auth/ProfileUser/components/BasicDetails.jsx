@@ -37,7 +37,7 @@ const BasicDetails = () => {
             console.log(values)
             await fetchUserProfile()
         } catch (error) {
-            toast.error(error.response?.data?.detail || error.message)
+            toast.error(error?.response?.data?.detail || error.message)
         }finally {
             setLoading(false)
         }

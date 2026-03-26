@@ -18,7 +18,7 @@ const HomePage = () => {
       setProducts(data)
       toast.success("Products fetched successfully")
     } catch (error) {
-      toast.error(error.response?.data?.detail || error.message)
+      toast.error(error?.response?.data?.detail || error.message)
     }finally {
       setLoading(false)
     }

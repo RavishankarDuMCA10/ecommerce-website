@@ -22,7 +22,7 @@ const AllProducts = () => {
             setProducts(data)
             setLoading(false)
         } catch (error) {
-            toast.error(error.response?.data?.detail || error.message)
+            toast.error(error?.response?.data?.detail || error.message)
         } finally {
             setLoading(false)
         }
@@ -80,7 +80,7 @@ const Card = ({ product, fetchAllProducts }) => {
             toast.success(data.msg)
 
         } catch (error) {
-            toast.error(error.response?.data?.detail || error.message)
+            toast.error(error?.response?.data?.detail || error.message)
         } finally {
             setLoading(false)
         }
