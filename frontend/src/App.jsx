@@ -15,6 +15,7 @@ import { ROLE_TYPE } from './constant/auth.constant'
 import RoleLayout from './layout/RoleLayout'
 import OrderPage from './pages/Orders'
 import ProductPage from './pages/ProductPage'
+import WishListPage from './pages/WishListPage'
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
           {/* Buyer routes */}
           <Route element={<RoleLayout role={ROLE_TYPE.BUYER} />}>
             <Route path='/orders' Component={OrderPage} />
+            <Route path='/wishlist' Component={WishListPage} />
           </Route>
 
           {/* /** Seller routes */        }

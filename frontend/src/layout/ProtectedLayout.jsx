@@ -6,6 +6,7 @@ import { Outlet, useNavigate, Link } from 'react-router-dom'
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { setToggle, SidebarSlicePath } from '@/redux/slice/sidebar.slice'
 import { MdDashboard, MdProductionQuantityLimits } from "react-icons/md";
+import { IoIosHeartEmpty } from "react-icons/io";
 import { ROLE_TYPE } from '@/constant/auth.constant'
 import { CgProfile } from 'react-icons/cg'
 import { CiShoppingCart } from "react-icons/ci";
@@ -54,7 +55,8 @@ const ProtectedLayout = () => {
                         user.role == ROLE_TYPE.BUYER ? <>
                         {/* Buyer */}
                             
-                            <MenuItem icon={<CiShoppingCart className='text-2xl' />} component={<Link to="/orders" />}> My Orders</MenuItem>
+                            <MenuItem icon={<CiShoppingCart className='text-2xl' />} component={<Link to="/orders" />}>Orders</MenuItem>
+                            <MenuItem icon={<IoIosHeartEmpty className='text-2xl' />} component={<Link to="/wishlist" />}>Wishlist</MenuItem>
                                 {/* <MenuItem component={<Link to="/all-products" />}> All Products</MenuItem> */}
                             
                         </> : <>

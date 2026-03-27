@@ -1,12 +1,21 @@
 from config.db import product_collection
 from random import choice
 from fastapi import HTTPException, status
+from typing import Optional
 
 
-async def getAllProductsService():
+async def getAllProductsService(
+    search: Optional[str] = None, category: Optional[str] = None
+):
+    query = {}
+    if search:
+        query["title"] = {"$regex": search, "$options": "i"}
+    if category:
+        query["category"] = {"$regex": f"^{category}$", "$options": "i"}
+
     all_products = []
     async for product in product_collection.find(
-        {},
+        query,
         {
             "_id": 0,
             "description": 0,

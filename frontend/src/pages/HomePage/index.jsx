@@ -1,59 +1,104 @@
 import LoaderComponent from '@/components/ui/LoaderComponent'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { axiosClient } from '@/utils/axiosClient'
-import  EmptyCartImage from '@/assets/empty.png'
+import EmptyCartImage from '@/assets/empty.png'
 import { Link } from 'react-router-dom'
+import { Categories } from '@/constant/products.constant'
+import { useSearchParams } from 'react-router-dom'
 
 const HomePage = () => {
-
   const [loading, setLoading] = useState(true)
   const [products, setProducts] = useState([])
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const fetchAllProducts = async () => {
+  const search = searchParams.get('search') || ''
+  const category = searchParams.get('category') || ''
+
+  const fetchAllProducts = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await axiosClient.get("/products")
-      const data = await response.data
-      setProducts(data)
-      toast.success("Products fetched successfully")
+      const params = {}
+      if (search) params.search = search
+      if (category) params.category = category
+      const response = await axiosClient.get('/products', { params })
+      setProducts(response.data)
     } catch (error) {
       toast.error(error?.response?.data?.detail || error.message)
-    }finally {
+    } finally {
       setLoading(false)
     }
-  }
-  
+  }, [search, category])
+
   useEffect(() => {
     fetchAllProducts()
-  }, [])
-  
-  if(loading) {
-    return <div className='min-h-56 flex items-center justify-center'>
-      <LoaderComponent />
-    </div>
+  }, [fetchAllProducts])
+
+  const handleSearch = (e) => {
+    const value = e.target.value
+    setSearchParams((prev) => {
+      if (value) prev.set('search', value)
+      else prev.delete('search')
+      return prev
+    })
   }
 
-
-  
+  const handleCategory = (e) => {
+    const value = e.target.value
+    setSearchParams((prev) => {
+      if (value) prev.set('category', value)
+      else prev.delete('category')
+      return prev
+    })
+  }
 
   return (
     <>
-    <section className="text-gray-600 body-font mx-auto">
-        <div className="container px-5 py-24 mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-            {
-              products.length > 0 ? products.map((cur, i) => (
-                <Card key={i} data={cur} />
-              )) : <div className="text-3xl text-center col-span-4 font-bold">
-                <img src={EmptyCartImage} alt="No products found" className="mx-auto mb-4 w-48 h-48 object-contain text-gray-50" />
-                No products found
-              </div>
-            }
+      <section className="text-gray-600 body-font mx-auto">
+        <div className="container px-5 py-10 mx-auto">
+          {/* Search & Filter Bar */}
+          <div className="flex flex-col sm:flex-row gap-3 mb-8">
+            <input
+              type="text"
+              value={search}
+              onChange={handleSearch}
+              placeholder="Search products..."
+              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            />
+            <select
+              value={category}
+              onChange={handleCategory}
+              className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            >
+              <option value="">All Categories</option>
+              {Object.entries(Categories).map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
+            </select>
           </div>
+
+          {loading ? (
+            <div className="min-h-56 flex items-center justify-center">
+              <LoaderComponent />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {products.length > 0 ? (
+                products.map((cur, i) => <Card key={i} data={cur} />)
+              ) : (
+                <div className="text-3xl text-center col-span-4 font-bold">
+                  <img
+                    src={EmptyCartImage}
+                    alt="No products found"
+                    className="mx-auto mb-4 w-48 h-48 object-contain text-gray-50"
+                  />
+                  No products found
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
-
     </>
   )
 }
