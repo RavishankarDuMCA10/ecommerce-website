@@ -1,0 +1,66 @@
+{
+  "family": "ecommerce-backend",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::<YOUR_ACCOUNT_ID>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<YOUR_ACCOUNT_ID>:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "ecommerce-backend",
+      "image": "<DOCKERHUB_USERNAME>/ecommerce-backend:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "MONGO_URI",
+          "valueFrom": "arn:aws:ssm:<REGION>:<YOUR_ACCOUNT_ID>:parameter/ecommerce/MONGO_URI"
+        },
+        {
+          "name": "MONGO_DB",
+          "valueFrom": "arn:aws:ssm:<REGION>:<YOUR_ACCOUNT_ID>:parameter/ecommerce/MONGO_DB"
+        },
+        {
+          "name": "JWT_AUTH_SECRET_KEY",
+          "valueFrom": "arn:aws:ssm:<REGION>:<YOUR_ACCOUNT_ID>:parameter/ecommerce/JWT_AUTH_SECRET_KEY"
+        },
+        {
+          "name": "API_KEY_CLOUDINARY",
+          "valueFrom": "arn:aws:ssm:<REGION>:<YOUR_ACCOUNT_ID>:parameter/ecommerce/API_KEY_CLOUDINARY"
+        },
+        {
+          "name": "API_SECRET_CLOUDINARY",
+          "valueFrom": "arn:aws:ssm:<REGION>:<YOUR_ACCOUNT_ID>:parameter/ecommerce/API_SECRET_CLOUDINARY"
+        },
+        {
+          "name": "CLOUD_NAME_CLOUDINARY",
+          "valueFrom": "arn:aws:ssm:<REGION>:<YOUR_ACCOUNT_ID>:parameter/ecommerce/CLOUD_NAME_CLOUDINARY"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ecommerce-backend",
+          "awslogs-region": "<REGION>",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:8000/ || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 10
+      }
+    }
+  ]
+}

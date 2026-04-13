@@ -8,3 +8,4 @@ cloudinary
 python-multipart
 python-slugify
 uuid
+pytest
